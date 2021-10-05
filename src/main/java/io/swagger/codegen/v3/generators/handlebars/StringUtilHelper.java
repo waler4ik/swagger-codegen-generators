@@ -28,4 +28,8 @@ public class StringUtilHelper {
         return "\\";
     }
 
+    public String arrowRight() {
+        return "->";
+    }
+
 }
