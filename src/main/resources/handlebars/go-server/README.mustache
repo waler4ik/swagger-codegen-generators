@@ -22,9 +22,17 @@ For more information, please visit [{{{infoUrl}}}]({{{infoUrl}}})
 
 
 ### Running the server
-To run the server, follow these simple steps:
+import (
+	"log"
+	"net/http"
+)
 
-```
-go run main.go
-```
+func main() {
+	log.Printf("Server started")
 
+	r := router.NewRouter()
+	{{#apiInfo}}{{#apis}}{{#operations}}
+	router.Register{{classname}}Callback({{classname}}CallbackImpl{}, r)
+	{{/operations}}{{/apis}}{{/apiInfo}}
+	log.Fatal(http.ListenAndServe(":{{serverPort}}", r))
+}

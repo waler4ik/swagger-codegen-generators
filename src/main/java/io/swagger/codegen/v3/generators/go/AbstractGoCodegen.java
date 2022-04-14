@@ -99,12 +99,17 @@ public abstract class AbstractGoCodegen extends DefaultCodegenConfig {
 
         importMapping = new HashMap<>();
 
+        apiPackage = "api";
+        modelPackage = "model";
+        
         cliOptions.clear();
         cliOptions.add(new CliOption(CodegenConstants.PACKAGE_NAME, "Go package name (convention: lowercase).")
                 .defaultValue("swagger"));
 
         cliOptions.add(new CliOption(CodegenConstants.HIDE_GENERATION_TIMESTAMP, CodegenConstants.HIDE_GENERATION_TIMESTAMP_DESC)
                 .defaultValue(Boolean.TRUE.toString()));
+        cliOptions.add(new CliOption(CodegenConstants.MODEL_PACKAGE, CodegenConstants.MODEL_PACKAGE_DESC).defaultValue(modelPackage));
+        cliOptions.add(new CliOption(CodegenConstants.API_PACKAGE, CodegenConstants.API_PACKAGE_DESC).defaultValue(apiPackage));
     }
 
     /**

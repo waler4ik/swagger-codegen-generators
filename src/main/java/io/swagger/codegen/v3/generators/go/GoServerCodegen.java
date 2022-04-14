@@ -18,13 +18,11 @@ public class GoServerCodegen extends AbstractGoCodegen {
     protected String apiVersion = "1.0.0";
     protected int serverPort = 8080;
     protected String projectName = "swagger-server";
-    protected String apiPath = "go";
 
     public GoServerCodegen() {
         super();
 
-        // set the output folder here
-        outputFolder = "generated-code/go";
+        apiPackage = "router";
 
         /*
          * Models.  You can write model files using the modelTemplateFiles map.
@@ -77,37 +75,37 @@ public class GoServerCodegen extends AbstractGoCodegen {
             setPackageName((String) additionalProperties.get(CodegenConstants.PACKAGE_NAME));
         }
         else {
-            setPackageName("swagger");
+            setPackageName(packageName);
         }
 
+        if (additionalProperties.containsKey(CodegenConstants.API_PACKAGE)) {
+            setApiPackage((String) additionalProperties.get(CodegenConstants.API_PACKAGE));
+        }
+        else {
+            setApiPackage(apiPackage);
+        }
+        
+        if (additionalProperties.containsKey(CodegenConstants.MODEL_PACKAGE)) {
+            setModelPackage((String) additionalProperties.get(CodegenConstants.MODEL_PACKAGE));
+        }
+        else {
+            setModelPackage(modelPackage);
+        }
+        
         /*
          * Additional Properties.  These values can be passed to the templates and
          * are available in models, apis, and supporting files
          */
         additionalProperties.put("apiVersion", apiVersion);
         additionalProperties.put("serverPort", serverPort);
-        additionalProperties.put("apiPath", apiPath);
-        additionalProperties.put(CodegenConstants.PACKAGE_NAME, packageName);
-
-        modelPackage = packageName;
-        apiPackage = packageName;
-
+        
         /*
          * Supporting Files.  You can write single files for the generator with the
          * entire object tree available.  If the input file has a suffix of `.mustache
          * it will be processed by the template engine.  Otherwise, it will be copied
          */
-        supportingFiles.add(new SupportingFile("swagger.mustache", "api", "swagger.yaml"));
-        supportingFiles.add(new SupportingFile("Dockerfile", "", "Dockerfile"));
-        supportingFiles.add(new SupportingFile("main.mustache", "", "main.go"));
-        supportingFiles.add(new SupportingFile("routers.mustache", apiPath, "routers.go"));
-        supportingFiles.add(new SupportingFile("logger.mustache", apiPath, "logger.go"));
-        writeOptional(outputFolder, new SupportingFile("README.mustache", apiPath, "README.md"));
-    }
-
-    @Override
-    public String apiPackage() {
-        return apiPath;
+        supportingFiles.add(new SupportingFile("routers.mustache", apiPackage, "routers.go"));
+        writeOptional(outputFolder, new SupportingFile("README.mustache", "", "README.md"));
     }
 
     /**
@@ -150,11 +148,11 @@ public class GoServerCodegen extends AbstractGoCodegen {
      */
     @Override
     public String apiFileFolder() {
-        return outputFolder + File.separator + apiPackage().replace('.', File.separatorChar);
+        return outputFolder + File.separator + apiPackage();
     }
 
     @Override
     public String modelFileFolder() {
-        return outputFolder + File.separator + apiPackage().replace('.', File.separatorChar);
+        return outputFolder + File.separator + modelPackage();
     }
 }

@@ -1,56 +1,36 @@
 {{>partial_header}}
-package {{packageName}}
+package {{apiPackage}}
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/mux"
 )
 
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
+type route struct {
+	name        string
+	method      string
+	pattern     string
+	handlerFunc http.HandlerFunc
 }
-
-type Routes []Route
 
 func NewRouter() *mux.Router {
-	router := mux.NewRouter().StrictSlash(true)
-	for _, route := range routes {
-		var handler http.Handler
-		handler = route.HandlerFunc
-		handler = Logger(handler, route.Name)
-
-		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(handler)
+	return mux.NewRouter().StrictSlash(true)
+}
+{{#apiInfo}}{{#apis}}{{#operations}}
+func Register{{classname}}Callback(c {{classname}}Callback, r *mux.Router) *mux.Router {
+	var routes = []route{
+		{{#operation}}
+		{"{{operationId}}", strings.ToUpper("{{httpMethod}}"),"{{{basePathWithoutHost}}}{{{path}}}", c.{{operationId}} },
+		{{/operation}}
 	}
 
-	return router
-}
+	for _, route := range routes {
+		r.Methods(route.method).Path(route.pattern).Name(route.name).Handler(route.handlerFunc)
+	}
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World!")
+	return r
 }
+{{/operations}}{{/apis}}{{/apiInfo}}
 
-var routes = Routes{
-	Route{
-		"Index",
-		"GET",
-		"{{{basePathWithoutHost}}}/",
-		Index,
-	},{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}
-
-	Route{
-		"{{operationId}}",
-		strings.ToUpper("{{httpMethod}}"),
-		"{{{basePathWithoutHost}}}{{{path}}}",
-		{{operationId}},
-	},{{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
-}
