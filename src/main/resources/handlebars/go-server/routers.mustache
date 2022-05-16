@@ -19,7 +19,7 @@ func NewRouter() *mux.Router {
 	return mux.NewRouter().StrictSlash(true)
 }
 {{#apiInfo}}{{#apis}}{{#operations}}
-func Register{{classname}}Callback(c {{classname}}Callback, r *mux.Router) *mux.Router {
+func Register{{classname}}Handler(c {{classname}}Handler, r *mux.Router) *mux.Router {
 	var routes = []route{
 		{{#operation}}
 		{"{{operationId}}", strings.ToUpper("{{httpMethod}}"),"{{{basePathWithoutHost}}}{{{path}}}", c.{{operationId}} },

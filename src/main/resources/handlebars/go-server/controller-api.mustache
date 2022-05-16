@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type {{classname}}Callback interface {
+type {{classname}}Handler interface {
 	{{#operation}}
 	{{nickname}}(w http.ResponseWriter, r *http.Request)
 	{{/operation}}
