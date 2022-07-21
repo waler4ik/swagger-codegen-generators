@@ -32,7 +32,7 @@ func main() {
 
 	r := router.NewRouter()
 	{{#apiInfo}}{{#apis}}{{#operations}}
-	router.Register{{classname}}Callback({{classname}}CallbackImpl{}, r)
+	router.Register{{classname}}Handler({{classname}}HandlerImpl{}, r)
 	{{/operations}}{{/apis}}{{/apiInfo}}
 	log.Fatal(http.ListenAndServe(":{{serverPort}}", r))
 }
